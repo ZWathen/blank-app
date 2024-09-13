@@ -28,6 +28,7 @@ if st.session_state.step == 'start':
     company_name = st.text_input("Enter a company name to find similar accounts:")
     if st.button("Find Similar Accounts"):
         response = send_request("sailebot_flow", {"company_name": company_name})
+        print(response)
         st.write(response["message"])
         st.session_state.similar_accounts = response["similar_accounts"]
         st.session_state.step = 'select_account'
@@ -39,6 +40,7 @@ elif st.session_state.step == 'select_account':
                                     [acc["id"] for acc in st.session_state.similar_accounts])
     if st.button("Add Account"):
         response = send_request("add_account", {"account_id": selected_account})
+        print(response)
         st.write(response["message"])
         st.session_state.account_id = response["account_id"]
         st.session_state.step = 'find_contacts'
