@@ -87,7 +87,7 @@ elif st.session_state.step == 'select_contact':
                                         [contact["id"] for contact in st.session_state.contacts])
         if st.button("Generate Email"):
             response = send_request("generate_email", {
-                "salesperson_id": "SAL001",  # You might want to make this dynamic
+                "salesperson_id": "222476",  # You might want to make this dynamic
                 "contact_id": selected_contact,
                 "account_id": st.session_state.account_id
             })
@@ -137,7 +137,7 @@ elif st.session_state.step == 'review_email':
         if st.button("Submit Feedback"):
             if st.session_state.thread_id:
                 response = send_request("refine_email", {
-                    "salesperson_id": "SAL001",  # You might want to make this dynamic
+                    "salesperson_id": "222476",  # You might want to make this dynamic
                     "contact_id": st.session_state.contact_id,
                     "account_id": st.session_state.account_id,
                     "feedback": feedback,
