@@ -5,6 +5,50 @@ import time
 
 BASE_URL = st.secrets["BASE_URL"]
 
+# Custom CSS to modify the default Streamlit style
+custom_css = """
+<style>
+    body {
+        color: #FFFFFF;
+        background-color: #8B0000;
+    }
+    .stButton>button {
+        color: #FFFFFF;
+        background-color: #000000;
+        border: 2px solid #FFFFFF;
+    }
+    .stTextInput>div>div>input {
+        color: #FFFFFF;
+        background-color: #000000;
+    }
+    .stSelectbox>div>div>select {
+        color: #FFFFFF;
+        background-color: #000000;
+    }
+    .stTextArea textarea {
+        color: #FFFFFF;
+        background-color: #000000;
+    }
+    .stRadio>label {
+        color: #FFFFFF;
+    }
+    .stCheckbox>label {
+        color: #FFFFFF;
+    }
+    .stMarkdown {
+        color: #FFFFFF;
+    }
+    .stSidebar .sidebar-content {
+        background-color: #8B0000;
+    }
+</style>
+"""
+
+# Inject custom CSS with Markdown
+st.markdown(custom_css, unsafe_allow_html=True)
+
+# Your existing Streamlit app code starts here
+st.title("Personalized Email Generation Demo")
 
 def send_request(endpoint, data):
     response = requests.post(f"{BASE_URL}/{endpoint}", json=data)
