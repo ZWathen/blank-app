@@ -117,37 +117,49 @@ elif st.session_state.step == 'review_email':
 
     action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
     
+    elif st.session_state.step == 'review_email':
+    st.header("Review and Refine Email")
+    
+    if st.session_state.email_content:
+        st.write("Generated Email:")
+        st.markdown(st.session_state.email_content)
+    else:
+        st.error("No email content available. Please go back and generate an email.")
+        st.session_state.step = 'select_contact'
+        st.rerun()
+
+    action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
+    
     if action == "Approve":
-            st.write("Debug: Approve action selected")
-            if st.button("Finalize Email"):
-                st.write("Debug: Finalize Email button clicked")
-                if st.session_state.thread_id and st.session_state.contact_id:
-                    st.write(f"Debug: thread_id: {st.session_state.thread_id}, contact_id: {st.session_state.contact_id}")
-                    with st.spinner("Finalizing email..."):
-                        try:
-                            response = send_request("finalize_email", {
-                                "thread_id": st.session_state.thread_id,
-                                "contact_id": st.session_state.contact_id
-                            })
-                            st.write(f"Debug: API Response: {response}")
-                            if 'message' in response:
-                                st.success(response["message"])
-                                if 'email_preview' in response:
-                                    st.write("Email Preview:")
-                                    st.write(response["email_preview"])
-                                if 'celebration' in response:
-                                    st.balloons()
-                                    st.success(response["celebration"])
-                                    time.sleep(10)
-                                st.session_state.step = 'start'
-                                st.rerun()
-                            else:
-                                st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
-                        except Exception as e:
-                            st.error(f"An error occurred: {str(e)}")
+        if st.button("Finalize Email"):
+            if st.session_state.thread_id and st.session_state.contact_id:
+                with st.spinner("Finalizing email..."):
+                    response = send_request("finalize_email", {
+                        "thread_id": st.session_state.thread_id,
+                        "contact_id": st.session_state.contact_id
+                    })
+                    time.sleep(3)
+                if 'message' in response:
+                    st.success(response["message"])
+                    if 'email_preview' in response:
+                        st.write("Email Preview:")
+                        st.write(response["email_preview"])
+                    if 'celebration' in response:
+                        st.balloons()
+                        st.success(response["celebration"])
+                    
+                    # Add a button to start a new email
+                    if st.button("Start New Email"):
+                        # Reset necessary session state variables
+                        for key in ['email_content', 'thread_id', 'contact_id', 'account_id']:
+                            if key in st.session_state:
+                                del st.session_state[key]
+                        st.session_state.step = 'start'
+                        st.rerun()
                 else:
-                    st.error("Missing thread_id or contact_id. Cannot finalize email.")
-                    st.write(f"Debug: thread_id: {st.session_state.get('thread_id', 'Not set')}, contact_id: {st.session_state.get('contact_id', 'Not set')}")
+                    st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
+            else:
+                st.error("Missing thread_id or contact_id. Cannot finalize email.")
 
 
     elif action == "Refine":
