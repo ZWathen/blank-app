@@ -55,7 +55,6 @@ def send_request(endpoint, data):
     print(f"Debug - {endpoint} response: {response.json()}")  # Debug print
     return response.json()
 
-st.title("SaileBot Demo")
 
 if 'step' not in st.session_state:
     st.session_state.step = 'start'
