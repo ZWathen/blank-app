@@ -60,11 +60,15 @@ if st.session_state.step == 'start':
 elif st.session_state.step == 'select_account':
     st.header("Select an Account")
     if st.session_state.similar_accounts:
-        selected_account = st.selectbox("Select an account to add:", 
-                                        [acc["id"] for acc in st.session_state.similar_accounts])
+        accounts = st.session_state.similar_accounts
+        account_display = [account["name"] for account in accounts]
+        account_ids = [account["id"] for account in accounts]
+        
+        selected_account = st.selectbox("Select an Account", options=account_display)
+        selected_account_id = account_ids[account_display.index(selected_account)]
         if st.button("Add Account"):
             with st.spinner("Adding account..."):
-                response = send_request("add_account", {"account_id": selected_account})
+                response = send_request("add_account", {"account_id": selected_account_id})
                 time.sleep(1)
             st.session_state.response = response["message"]
             st.session_state.account_id = response.get("account_id")
@@ -91,8 +95,12 @@ elif st.session_state.step == 'find_contacts':
 elif st.session_state.step == 'select_contact':
     st.header("Select a Contact and Generate Email")
     if st.session_state.contacts:
-        selected_contact = st.selectbox("Select a contact:", 
-                                        [contact["id"] for contact in st.session_state.contacts])
+        selected_contacts = [f"{con['name']} - {con['title']}" for con in st.session_state.contacts]
+        selected_contact_ids = [con["id"] for con in st.session_state.contacts]
+        
+        selected_contact_whole = st.selectbox("Select a Contact", options=selected_contacts)
+        selected_contact = selected_contact_ids[selected_contacts.index(selected_contact_whole)]
+        
         if st.button("Generate Email"):
             with st.spinner("Generating Email..."):
                 response = send_request("generate_email", {
