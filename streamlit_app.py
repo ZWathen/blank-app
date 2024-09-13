@@ -126,6 +126,12 @@ elif st.session_state.step == 'review_email':
                     })
                 if 'message' in response:
                     st.success(response["message"])
+                    if 'email_preview' in response:
+                        st.write("Email Preview:")
+                        st.write(response["email_preview"])
+                    if 'celebration' in response:
+                        st.balloons()  # This adds a fun balloon animation
+                        st.success(response["celebration"])
                     st.session_state.step = 'start'
                     st.rerun()
                 else:
@@ -139,7 +145,7 @@ elif st.session_state.step == 'review_email':
             if st.session_state.thread_id:
                 with st.spinner("Refining email..."):
                     response = send_request("refine_email", {
-                        "salesperson_id": "SAL001",  # You might want to make this dynamic
+                        "salesperson_id": "222476",  # You might want to make this dynamic
                         "contact_id": st.session_state.contact_id,
                         "account_id": st.session_state.account_id,
                         "feedback": feedback,
