@@ -119,45 +119,47 @@ elif st.session_state.step == 'review_email':
     if action == "Approve":
         if st.button("Finalize Email"):
             if st.session_state.thread_id and st.session_state.contact_id:
-                response = send_request("finalize_email", {
-                    "thread_id": st.session_state.thread_id,
-                    "contact_id": st.session_state.contact_id
-                })
+                with st.spinner("Finalizing email..."):
+                    response = send_request("finalize_email", {
+                        "thread_id": st.session_state.thread_id,
+                        "contact_id": st.session_state.contact_id
+                    })
                 if 'message' in response:
                     st.success(response["message"])
                     st.session_state.step = 'start'
+                    st.rerun()
                 else:
                     st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
             else:
                 st.error("Missing thread_id or contact_id. Cannot finalize email.")
-            st.rerun()
 
     elif action == "Refine":
         feedback = st.text_area("Provide feedback for refinement:")
         if st.button("Submit Feedback"):
             if st.session_state.thread_id:
-                response = send_request("refine_email", {
-                    "salesperson_id": "222476",  # You might want to make this dynamic
-                    "contact_id": st.session_state.contact_id,
-                    "account_id": st.session_state.account_id,
-                    "feedback": feedback,
-                    "thread_id": st.session_state.thread_id
-                })
+                with st.spinner("Refining email..."):
+                    response = send_request("refine_email", {
+                        "salesperson_id": "SAL001",  # You might want to make this dynamic
+                        "contact_id": st.session_state.contact_id,
+                        "account_id": st.session_state.account_id,
+                        "feedback": feedback,
+                        "thread_id": st.session_state.thread_id
+                    })
                 if 'email_content' in response:
                     st.session_state.email_content = response["email_content"]
                     st.success("Email refined successfully!")
+                    st.rerun()
                 else:
                     st.error(f"Error refining email: {response.get('detail', 'Unknown error')}")
             else:
                 st.error("Missing thread_id. Cannot refine email.")
-            st.rerun()
 
     elif action == "Cancel":
         if st.button("Cancel and Start Over"):
-            st.session_state.step = 'start'
             for key in ['email_content', 'thread_id', 'contact_id', 'account_id']:
                 if key in st.session_state:
                     del st.session_state[key]
+            st.session_state.step = 'start'
             st.rerun()
 
 # Add a sidebar to show the current step
