@@ -1,6 +1,7 @@
 import streamlit as st
 import requests
 import json
+import time
 
 BASE_URL = st.secrets["BASE_URL"]
 
@@ -137,6 +138,7 @@ elif st.session_state.step == 'review_email':
                                 if 'celebration' in response:
                                     st.balloons()
                                     st.success(response["celebration"])
+                                    time.sleep(10)
                                 st.session_state.step = 'start'
                                 st.rerun()
                             else:
