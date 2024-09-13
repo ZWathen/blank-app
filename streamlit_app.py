@@ -117,28 +117,36 @@ elif st.session_state.step == 'review_email':
     action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
     
     if action == "Approve":
-        if st.button("Finalize Email"):
-            if st.session_state.thread_id and st.session_state.contact_id:
-                with st.spinner("Finalizing email..."):
-                    response = send_request("finalize_email", {
-                        "thread_id": st.session_state.thread_id,
-                        "contact_id": st.session_state.contact_id
-                    })
-                    print(response)
-                if 'message' in response:
-                    st.success(response["message"])
-                    if 'email_preview' in response:
-                        st.write("Email Preview:")
-                        st.write(response["email_preview"])
-                    if 'celebration' in response:
-                        st.balloons()  # This adds a fun balloon animation
-                        st.success(response["celebration"])
-                    st.session_state.step = 'start'
-                    st.rerun()
+            st.write("Debug: Approve action selected")
+            if st.button("Finalize Email"):
+                st.write("Debug: Finalize Email button clicked")
+                if st.session_state.thread_id and st.session_state.contact_id:
+                    st.write(f"Debug: thread_id: {st.session_state.thread_id}, contact_id: {st.session_state.contact_id}")
+                    with st.spinner("Finalizing email..."):
+                        try:
+                            response = send_request("finalize_email", {
+                                "thread_id": st.session_state.thread_id,
+                                "contact_id": st.session_state.contact_id
+                            })
+                            st.write(f"Debug: API Response: {response}")
+                            if 'message' in response:
+                                st.success(response["message"])
+                                if 'email_preview' in response:
+                                    st.write("Email Preview:")
+                                    st.write(response["email_preview"])
+                                if 'celebration' in response:
+                                    st.balloons()
+                                    st.success(response["celebration"])
+                                st.session_state.step = 'start'
+                                st.rerun()
+                            else:
+                                st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
+                        except Exception as e:
+                            st.error(f"An error occurred: {str(e)}")
                 else:
-                    st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
-            else:
-                st.error("Missing thread_id or contact_id. Cannot finalize email.")
+                    st.error("Missing thread_id or contact_id. Cannot finalize email.")
+                    st.write(f"Debug: thread_id: {st.session_state.get('thread_id', 'Not set')}, contact_id: {st.session_state.get('contact_id', 'Not set')}")
+
 
     elif action == "Refine":
         feedback = st.text_area("Provide feedback for refinement:")
