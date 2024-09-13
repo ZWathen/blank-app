@@ -66,6 +66,7 @@ elif st.session_state.step == 'select_account':
         
         selected_account = st.selectbox("Select an Account", options=account_display)
         selected_account_id = account_ids[account_display.index(selected_account)]
+        print(f"selected_account_id {selected_account_id}")
         if st.button("Add Account"):
             with st.spinner("Adding account..."):
                 response = send_request("add_account", {"account_id": selected_account_id})
