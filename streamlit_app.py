@@ -12,7 +12,6 @@ def send_request(endpoint, data):
 
 st.title("SaileBot Demo")
 
-# Initialize session state variables
 if 'step' not in st.session_state:
     st.session_state.step = 'start'
 if 'account_id' not in st.session_state:
@@ -23,13 +22,21 @@ if 'thread_id' not in st.session_state:
     st.session_state.thread_id = None
 if 'response' not in st.session_state:
     st.session_state.response = None
+if 'email_content' not in st.session_state:
+    st.session_state.email_content = None
+if 'refined_email' not in st.session_state:
+    st.session_state.refined_email = None
 
-# Display current response
+# Display current response and email content
 if st.session_state.response:
     st.write(st.session_state.response)
     st.session_state.response = None  # Clear the response after displaying
 
-if 'email_content' in st.session_state and st.session_state.email_content:
+if st.session_state.refined_email:
+    st.write("Current Refined Email Content:")
+    st.markdown(st.session_state.refined_email)
+
+elif st.session_state.email_content:
     st.write("Current Email Content:")
     st.markdown(st.session_state.email_content)
 
