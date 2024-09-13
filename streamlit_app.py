@@ -117,19 +117,6 @@ elif st.session_state.step == 'review_email':
 
     action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
     
-    elif st.session_state.step == 'review_email':
-    st.header("Review and Refine Email")
-    
-    if st.session_state.email_content:
-        st.write("Generated Email:")
-        st.markdown(st.session_state.email_content)
-    else:
-        st.error("No email content available. Please go back and generate an email.")
-        st.session_state.step = 'select_contact'
-        st.rerun()
-
-    action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
-    
     if action == "Approve":
         if st.button("Finalize Email"):
             if st.session_state.thread_id and st.session_state.contact_id:
