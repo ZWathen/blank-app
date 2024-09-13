@@ -39,7 +39,7 @@ if st.session_state.step == 'start':
         st.session_state.similar_accounts = response.get("similar_accounts", [])
         print(f"Debug - Similar accounts: {st.session_state.similar_accounts}")  # Debug print
         st.session_state.step = 'select_account'
-        st.experimental_rerun()
+        st.rerun()
 
 # Step 2: Select and add an account
 elif st.session_state.step == 'select_account':
@@ -53,7 +53,7 @@ elif st.session_state.step == 'select_account':
             st.session_state.account_id = response.get("account_id")
             print(f"Debug - Added account: {st.session_state.account_id}")  # Debug print
             st.session_state.step = 'find_contacts'
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.write("No similar accounts found. Please go back and try again.")
 
@@ -66,7 +66,7 @@ elif st.session_state.step == 'find_contacts':
         st.session_state.contacts = response.get("contacts", [])
         print(f"Debug - Contacts found: {st.session_state.contacts}")  # Debug print
         st.session_state.step = 'select_contact'
-        st.experimental_rerun()
+        st.rerun()
 
 # Step 4: Select a contact and generate email
 elif st.session_state.step == 'select_contact':
@@ -85,7 +85,7 @@ elif st.session_state.step == 'select_contact':
             st.session_state.contact_id = selected_contact
             print(f"Debug - Generated email for contact: {selected_contact}")  # Debug print
             st.session_state.step = 'review_email'
-            st.experimental_rerun()
+            st.rerun()
     else:
         st.write("No contacts found. Please go back and try again.")
 
@@ -106,7 +106,7 @@ elif st.session_state.step == 'review_email':
             st.session_state.response = response["message"]
             print(f"Debug - Email finalized: {response}")  # Debug print
             st.session_state.step = 'start'  # Reset to start
-            st.experimental_rerun()
+            st.rerun()
     elif action == "Refine":
         feedback = st.text_area("Provide feedback for refinement:")
         if st.button("Submit Feedback"):
@@ -120,11 +120,11 @@ elif st.session_state.step == 'review_email':
             st.session_state.email_content = response.get("email_content", "")
             st.session_state.thread_id = response.get("thread_id")
             print(f"Debug - Email refined: {response}")  # Debug print
-            st.experimental_rerun()
+            st.rerun()
     elif action == "Cancel":
         if st.button("Cancel and Start Over"):
             st.session_state.step = 'start'  # Reset to start
-            st.experimental_rerun()
+            st.rerun()
 
 # Add a sidebar to show the current step
 st.sidebar.header("Current Step")
@@ -134,7 +134,7 @@ st.sidebar.write(st.session_state.step.replace('_', ' ').title())
 if st.sidebar.button("Start Over"):
     for key in list(st.session_state.keys()):
         del st.session_state[key]
-    st.experimental_rerun()
+    st.rerun()
 
 # Debug print of current session state
 print(f"Debug - Current session state: {st.session_state}")
