@@ -85,6 +85,7 @@ elif st.session_state.step == 'review_email':
                 "thread_id": st.session_state.thread_id,
                 "contact_id": st.session_state.contact_id
             })
+            print(response)
             st.write(response["message"])
             st.session_state.step = 'start'  # Reset to start
     elif action == "Refine":
@@ -97,6 +98,7 @@ elif st.session_state.step == 'review_email':
                 "feedback": feedback,
                 "thread_id": st.session_state.thread_id  # Include the thread_id
             })
+            print(response)
             st.session_state.email_content = response["email_content"]
             st.session_state.thread_id = response["thread_id"]
             st.experimental_rerun()
