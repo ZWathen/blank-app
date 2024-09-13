@@ -65,6 +65,7 @@ elif st.session_state.step == 'select_contact':
             "contact_id": selected_contact,
             "account_id": st.session_state.account_id
         })
+        print(response)
         st.session_state.email_content = response["email_content"]
         st.session_state.thread_id = response["thread_id"]
         st.session_state.contact_id = selected_contact
