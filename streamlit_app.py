@@ -47,7 +47,9 @@ if st.session_state.step == 'start':
     st.header("Find Similar Accounts")
     company_name = st.text_input("Enter a company name to find similar accounts:")
     if st.button("Find Similar Accounts"):
-        response = send_request("sailebot_flow", {"company_name": company_name})
+        with st.spinner("Finding similar accounts..."):
+            response = send_request("sailebot_flow", {"company_name": company_name})
+            time.sleep(2)
         st.session_state.response = response["message"]
         st.session_state.similar_accounts = response.get("similar_accounts", [])
         print(f"Debug - Similar accounts: {st.session_state.similar_accounts}")  # Debug print
@@ -61,7 +63,9 @@ elif st.session_state.step == 'select_account':
         selected_account = st.selectbox("Select an account to add:", 
                                         [acc["id"] for acc in st.session_state.similar_accounts])
         if st.button("Add Account"):
-            response = send_request("add_account", {"account_id": selected_account})
+            with st.spinner("Adding account..."):
+                response = send_request("add_account", {"account_id": selected_account})
+                time.sleep(1)
             st.session_state.response = response["message"]
             st.session_state.account_id = response.get("account_id")
             print(f"Debug - Added account: {st.session_state.account_id}")  # Debug print
@@ -74,7 +78,9 @@ elif st.session_state.step == 'select_account':
 elif st.session_state.step == 'find_contacts':
     st.header("Find Contacts")
     if st.button("Find Contacts"):
-        response = send_request("find_contacts", {"account_id": st.session_state.account_id})
+        with st.spinner("Finding contacts..."):
+            response = send_request("find_contacts", {"account_id": st.session_state.account_id})
+            time.sleep(2)
         st.session_state.response = response["message"]
         st.session_state.contacts = response.get("contacts", [])
         print(f"Debug - Contacts found: {st.session_state.contacts}")  # Debug print
@@ -88,11 +94,12 @@ elif st.session_state.step == 'select_contact':
         selected_contact = st.selectbox("Select a contact:", 
                                         [contact["id"] for contact in st.session_state.contacts])
         if st.button("Generate Email"):
-            response = send_request("generate_email", {
-                "salesperson_id": "222476",  # You might want to make this dynamic
-                "contact_id": selected_contact,
-                "account_id": st.session_state.account_id
-            })
+            with st.spinner("Generating Email..."):
+                response = send_request("generate_email", {
+                    "salesperson_id": "222476",  # You might want to make this dynamic
+                    "contact_id": selected_contact,
+                    "account_id": st.session_state.account_id
+                })
             if 'email_content' in response and 'thread_id' in response:
                 st.session_state.email_content = response["email_content"]
                 st.session_state.thread_id = response["thread_id"]
