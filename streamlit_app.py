@@ -5,14 +5,12 @@ import time
 
 BASE_URL = st.secrets["BASE_URL"]
 
-# Set page configuration to wide mode
-st.set_page_config(layout="wide")
 
 # Custom CSS to modify the default Streamlit style
 custom_css = """
 <style>
     .stApp {
-        background-color: #FF0000;
+        background-color: #B22222;  /* This is a subdued red (Firebrick) */
     }
     .main .block-container {
         max-width: 100%;
@@ -22,7 +20,7 @@ custom_css = """
         padding-bottom: 1rem;
     }
     body {
-        color: #FFFFFF;
+        color: #000000;  /* Black text */
     }
     .stButton>button {
         color: #FFFFFF;
@@ -30,28 +28,32 @@ custom_css = """
         border: 2px solid #FFFFFF;
     }
     .stTextInput>div>div>input {
-        color: #FFFFFF;
-        background-color: #000000;
+        color: #000000;
+        background-color: #FFFFFF;
     }
     .stSelectbox>div>div>select {
-        color: #FFFFFF;
-        background-color: #000000;
+        color: #000000;
+        background-color: #FFFFFF;
     }
     .stTextArea textarea {
-        color: #FFFFFF;
-        background-color: #000000;
+        color: #000000;
+        background-color: #FFFFFF;
     }
     .stRadio>label {
-        color: #FFFFFF;
+        color: #000000;
     }
     .stCheckbox>label {
-        color: #FFFFFF;
+        color: #000000;
     }
     .stMarkdown {
-        color: #FFFFFF;
+        color: #000000;
     }
     .stSidebar .sidebar-content {
-        background-color: #FF0000;
+        background-color: #B22222;
+    }
+    /* Ensure all text is black */
+    p, h1, h2, h3, h4, h5, h6, .stMarkdown, .stException, .stWarning {
+        color: #000000 !important;
     }
 </style>
 """
@@ -64,15 +66,13 @@ st.markdown(
     """
     <style>
     .stApp {
-        background-image: linear-gradient(#FF0000, #FF0000);
+        background-image: linear-gradient(#B22222, #B22222);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
 
-# Inject custom CSS with Markdown
-st.markdown(custom_css, unsafe_allow_html=True)
 
 st.title("Personalized Email Generation Demo")
 
