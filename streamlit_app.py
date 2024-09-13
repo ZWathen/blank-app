@@ -29,6 +29,10 @@ if st.session_state.response:
     st.write(st.session_state.response)
     st.session_state.response = None  # Clear the response after displaying
 
+if 'email_content' in st.session_state and st.session_state.email_content:
+    st.write("Current Email Content:")
+    st.markdown(st.session_state.email_content)
+
 # Step 1: Find similar accounts
 if st.session_state.step == 'start':
     st.header("Find Similar Accounts")
