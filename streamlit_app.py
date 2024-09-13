@@ -5,12 +5,24 @@ import time
 
 BASE_URL = st.secrets["BASE_URL"]
 
+# Set page configuration to wide mode
+st.set_page_config(layout="wide")
+
 # Custom CSS to modify the default Streamlit style
 custom_css = """
 <style>
+    .stApp {
+        background-color: #FF0000;
+    }
+    .main .block-container {
+        max-width: 100%;
+        padding-top: 1rem;
+        padding-right: 1rem;
+        padding-left: 1rem;
+        padding-bottom: 1rem;
+    }
     body {
         color: #FFFFFF;
-        background-color: #8B0000;
     }
     .stButton>button {
         color: #FFFFFF;
@@ -39,7 +51,7 @@ custom_css = """
         color: #FFFFFF;
     }
     .stSidebar .sidebar-content {
-        background-color: #8B0000;
+        background-color: #FF0000;
     }
 </style>
 """
@@ -47,7 +59,21 @@ custom_css = """
 # Inject custom CSS with Markdown
 st.markdown(custom_css, unsafe_allow_html=True)
 
-# Your existing Streamlit app code starts here
+# Set background color
+st.markdown(
+    """
+    <style>
+    .stApp {
+        background-image: linear-gradient(#FF0000, #FF0000);
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+# Inject custom CSS with Markdown
+st.markdown(custom_css, unsafe_allow_html=True)
+
 st.title("Personalized Email Generation Demo")
 
 def send_request(endpoint, data):
