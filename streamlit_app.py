@@ -124,6 +124,7 @@ elif st.session_state.step == 'review_email':
                         "thread_id": st.session_state.thread_id,
                         "contact_id": st.session_state.contact_id
                     })
+                    print(response)
                 if 'message' in response:
                     st.success(response["message"])
                     if 'email_preview' in response:
