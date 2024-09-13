@@ -87,54 +87,77 @@ elif st.session_state.step == 'select_contact':
                                         [contact["id"] for contact in st.session_state.contacts])
         if st.button("Generate Email"):
             response = send_request("generate_email", {
-                "salesperson_id": "222476",  # You might want to make this dynamic
+                "salesperson_id": "SAL001",  # You might want to make this dynamic
                 "contact_id": selected_contact,
                 "account_id": st.session_state.account_id
             })
-            st.session_state.email_content = response.get("email_content", "")
-            st.session_state.thread_id = response.get("thread_id")
-            st.session_state.contact_id = selected_contact
-            print(f"Debug - Generated email for contact: {selected_contact}")  # Debug print
-            st.session_state.step = 'review_email'
-            st.rerun()
+            if 'email_content' in response and 'thread_id' in response:
+                st.session_state.email_content = response["email_content"]
+                st.session_state.thread_id = response["thread_id"]
+                st.session_state.contact_id = selected_contact
+                st.session_state.step = 'review_email'
+                st.rerun()
+            else:
+                st.error(f"Error generating email: {response.get('detail', 'Unknown error')}")
     else:
         st.write("No contacts found. Please go back and try again.")
 
 # Step 5: Review and refine email
 elif st.session_state.step == 'review_email':
     st.header("Review and Refine Email")
-    st.write("Generated Email:")
-    st.markdown(st.session_state.email_content)
     
+    if st.session_state.email_content:
+        st.write("Generated Email:")
+        st.markdown(st.session_state.email_content)
+    else:
+        st.error("No email content available. Please go back and generate an email.")
+        st.session_state.step = 'select_contact'
+        st.rerun()
+
     action = st.radio("What would you like to do?", ["Approve", "Refine", "Cancel"])
     
     if action == "Approve":
         if st.button("Finalize Email"):
-            response = send_request("finalize_email", {
-                "thread_id": st.session_state.thread_id,
-                "contact_id": st.session_state.contact_id
-            })
-            st.session_state.response = response["message"]
-            print(f"Debug - Email finalized: {response}")  # Debug print
-            st.session_state.step = 'start'  # Reset to start
+            if st.session_state.thread_id and st.session_state.contact_id:
+                response = send_request("finalize_email", {
+                    "thread_id": st.session_state.thread_id,
+                    "contact_id": st.session_state.contact_id
+                })
+                if 'message' in response:
+                    st.success(response["message"])
+                    st.session_state.step = 'start'
+                else:
+                    st.error(f"Error finalizing email: {response.get('detail', 'Unknown error')}")
+            else:
+                st.error("Missing thread_id or contact_id. Cannot finalize email.")
             st.rerun()
+
     elif action == "Refine":
         feedback = st.text_area("Provide feedback for refinement:")
         if st.button("Submit Feedback"):
-            response = send_request("refine_email", {
-                "salesperson_id": "SAL001",  # You might want to make this dynamic
-                "contact_id": st.session_state.contact_id,
-                "account_id": st.session_state.account_id,
-                "feedback": feedback,
-                "thread_id": st.session_state.thread_id
-            })
-            st.session_state.email_content = response.get("email_content", "")
-            st.session_state.thread_id = response.get("thread_id")
-            print(f"Debug - Email refined: {response}")  # Debug print
+            if st.session_state.thread_id:
+                response = send_request("refine_email", {
+                    "salesperson_id": "SAL001",  # You might want to make this dynamic
+                    "contact_id": st.session_state.contact_id,
+                    "account_id": st.session_state.account_id,
+                    "feedback": feedback,
+                    "thread_id": st.session_state.thread_id
+                })
+                if 'email_content' in response:
+                    st.session_state.email_content = response["email_content"]
+                    st.success("Email refined successfully!")
+                else:
+                    st.error(f"Error refining email: {response.get('detail', 'Unknown error')}")
+            else:
+                st.error("Missing thread_id. Cannot refine email.")
             st.rerun()
+
     elif action == "Cancel":
         if st.button("Cancel and Start Over"):
-            st.session_state.step = 'start'  # Reset to start
+            st.session_state.step = 'start'
+            for key in ['email_content', 'thread_id', 'contact_id', 'account_id']:
+                if key in st.session_state:
+                    del st.session_state[key]
             st.rerun()
 
 # Add a sidebar to show the current step
@@ -149,3 +172,10 @@ if st.sidebar.button("Start Over"):
 
 # Debug print of current session state
 print(f"Debug - Current session state: {st.session_state}")
+
+
+st.sidebar.write("Debug Info:")
+st.sidebar.write(f"Current Step: {st.session_state.step}")
+st.sidebar.write(f"Thread ID: {st.session_state.get('thread_id', 'Not set')}")
+st.sidebar.write(f"Contact ID: {st.session_state.get('contact_id', 'Not set')}")
+st.sidebar.write(f"Account ID: {st.session_state.get('account_id', 'Not set')}")
